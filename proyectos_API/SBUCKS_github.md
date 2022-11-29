@@ -364,6 +364,19 @@ features <- CAFES_df %>% distinct(store.id, .keep_all = TRUE) %>%
             distinct(feature.code, feature.name)
 ```
 
+Una tercera tabla es necesaria para complementar al paso anterior. Se
+debe almacenar una lista con los servicios que tiene cada
+establecimiento para relacionarlos en un futuro dentro del modelo de
+datos.
+
+``` r
+tiendas_features <- CAFES_df %>% distinct(store.id, .keep_all = TRUE) %>% 
+                    transmute(store.id, store.features.feature) %>% 
+                    unnest_wider(col = store.features.feature) %>% 
+                    rename(feature.code = code, feature.name = name) %>% 
+                    unnest(cols = c(feature.code, feature.name))
+```
+
 Ahora, procedemos a limpiar y transformar nuestros datos:
 
 ``` r
@@ -380,6 +393,8 @@ CSV para almacenarlo y tenerlo listo para futuros análisis.
 `write_excel_csv(CAFES_df_final, "STARBUCKS_en_Mexico.csv")`
 
 `write_excel_csv(features, "servicios_starbucks.csv")`
+
+`write_excel_csv(tiendas_features,"tiendas_servicios_starbucks.csv")`
 
 El archivo final puede ser consultado aquí:
 <https://drive.google.com/file/d/1yNZe6RvtK8jlDDLHPQUSRodCwCwrOKGf/view?usp=share_link>
